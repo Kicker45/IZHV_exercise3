@@ -57,8 +57,8 @@ public class Enemy : MonoBehaviour
     /// <summary>
     /// Update called at fixed time delta.
     /// </summary>
-    void FixedUpdate()
-    {
+    //void FixedUpdate()
+    //{
         /*
          * Task #1B: Implement the enemy functionality
          * Useful functions and variables:
@@ -74,7 +74,34 @@ public class Enemy : MonoBehaviour
          *    Use mRigidBody.MovePosition to move the enemy
          * Implement a simple AI, which will head towards the closest player and follow them.
          */
+
+    //}
+
+    void FixedUpdate()
+    {
+        // Find the nearest player to this enemy's position
+         var closestPlayer = GameManager.Instance.NearestPlayer(transform.position);
+
+        // Check if a player was found
+        if (closestPlayer != null)
+        {
+            // Calculate the direction from the enemy to the closest player
+            Vector3 directionToPlayer = closestPlayer.transform.position - transform.position;
+
+            // Calculate the rotation to face the player
+            Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer, Vector3.forward);
+
+            // Set the enemy's rotation to face the player
+            transform.rotation = lookRotation;
+
+            // Calculate the movement direction towards the player
+            Vector3 moveDirection = directionToPlayer.normalized;
+
+            // Move the enemy using its rigidbody
+            mRigidBody.MovePosition(transform.position + moveDirection * speed * Time.fixedDeltaTime);
+        }
     }
+
 
     /// <summary>
     /// Triggered when a collision is detected.

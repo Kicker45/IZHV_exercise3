@@ -185,7 +185,7 @@ public class Gun : MonoBehaviour
     }
 
     /// <summary>
-    /// Shoot the gun using provided transform as a director.
+    /// Shoot the gun using the provided transform as a director.
     /// </summary>
     /// <param name="director"></param>
     public void ShootGun(Transform director)
@@ -193,19 +193,41 @@ public class Gun : MonoBehaviour
         /*
          * Task #1A: Implement the gun functionality
          * Useful functions and variables:
-         *  - Spawn a bullet at given position: SpawnBullet(position, rotation)
+         *  - Spawn a bullet at the given position: SpawnBullet(position, rotation)
          *  - Create rotation from Euler angles: Quaternion.Euler(rotX, rotY, rotZ)
          *  - Director of the bullets (the gun) : director.position, director.rotation
          *  - Mode of the weapon, spread bullets if true : shotgun
          *  - Number / spread of shotgun bullets : shotgunBullets, shotgunSpread
          * Implement both single shot and shotgun (swap by pressing <SPACE> by default)
          */
-        
-        SpawnBullet(
-            director.position, 
-            Quaternion.Euler(0.0f, 0.0f, 5.0f)
-        );
+
+        // Implement single shot mode
+        if (!shotgun)
+        {
+            // Spawn a single bullet at the calculated position and rotation
+            SpawnBullet(director.position, director.rotation);
+        }
+        // Implement shotgun mode
+        else
+        {
+            int numShotgunBullets = shotgunBullets;
+            float shotgunSpreadAngle = shotgunSpread;
+
+            // Calculate the spread angle for the shotgun bullets
+            float angleIncrement = shotgunSpreadAngle / (numShotgunBullets - 1);
+
+            // Iterate to spawn each shotgun bullet with a spread
+            for (int i = 0; i < numShotgunBullets; i++)
+            {
+                // Calculate the spread rotation
+                Quaternion spreadRotation = director.rotation * Quaternion.Euler(0, -shotgunSpreadAngle / 2 + i * angleIncrement, 0);
+
+                // Spawn a shotgun bullet at the calculated position and rotation
+                SpawnBullet(director.position, spreadRotation);
+            }
+        }
     }
+
 
     /// <summary>
     /// Spawn a single bullet using provided transform as a director.
